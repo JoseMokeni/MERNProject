@@ -129,7 +129,7 @@ const loginUser = asyncHandler(async (req, res) => {
 })
 
 // @desc: Get user profile
-// @route: GET /api/users/:id
+// @route: GET /api/users/me/:id
 // @access: Private
 const getUser = asyncHandler(async (req, res) => {
     // get the id from the incoming request
@@ -175,7 +175,73 @@ const getUser = asyncHandler(async (req, res) => {
 
 // @desc: Get all users
 // @route: GET /api/users
+// @access: Private and only available to admins
+
+const getUsers = asyncHandler(async (req, res) => {
+    const token = req.headers.authorization.split(' ')[1]
+    const decoded = jwt.verify(token, process.env.JWT_SECRET)
+
+    if (!decoded) {
+        res.status(401)
+        throw new Error('Invalid token')
+    }
+
+    if (decoded.role !== 'admin') {
+        res.status(401)
+        throw new Error('Invalid token')
+    }
+
+    const users = await User.find({})
+
+    if (users) {
+        res.status(200)
+        res.json(users)
+    } else {
+        res.status(404)
+        throw new Error('Users not found')
+    }
+})
+
+// @desc: Delete a user
+// @route: DELETE /api/users/:id
 // @access: Private
+
+const deleteUser = asyncHandler(async (req, res) => {
+    const token = req.headers.authorization.split(' ')[1]
+    const decoded = jwt.verify(token, process.env.JWT_SECRET)
+
+    // console.log("Decoded")
+    // console.log(decoded)
+
+
+    const id = req.query.id
+    // console.log(id)
+
+    if (!decoded) {
+        res.status(401)
+        throw new Error('Invalid token')
+    }
+
+    if (decoded.role !== 'admin' && decoded._id !== req.params.id) {
+        res.status(401)
+        throw new Error('Invalid token')
+    }
+
+    const deletedUser = await User.findByIdAndDelete(id)
+
+    // console.log(deletedUser)
+
+    if (deletedUser) {
+        res.status(200)
+        res.json({
+            message: 'User deleted successfully'
+        })
+    } else {
+        res.status(404)
+        throw new Error('User not found')
+    }
+
+})
 
 
 // token generator
@@ -194,5 +260,7 @@ const generateToken = (user) => {
 module.exports = {
     registerUser,
     loginUser,
-    getUser
+    getUser,
+    getUsers,
+    deleteUser
 }
