@@ -1,13 +1,28 @@
 const express =require('express')
 const dotenv = require('dotenv').config()
+const cors = require('cors')
+const cloudinary = require('cloudinary').v2
 const {errorHandler} = require('./middlewares/errorMiddleware')
 const PORT = process.env.PORT || 3001
 const mongoose = require('mongoose')
+const expressFileUpload = require('express-fileupload')
+
+// cloudinary config
+
+cloudinary.config({
+    cloud_name: process.env.CLOUD_NAME,
+    api_key: process.env.API_KEY, 
+    api_secret: process.env.API_SECRET
+})
 
 const app = express()
 
 app.use(express.json())
 app.use(express.urlencoded({extended: false}))
+app.use(cors())
+app.use(expressFileUpload({
+    useTempFiles: true
+}))
 
 // mongoose connection
 mongoose.connect(process.env.MONGO_URI).then(() => {
@@ -18,6 +33,7 @@ mongoose.connect(process.env.MONGO_URI).then(() => {
 
 
 app.use('/api/users', require('./routes/userRoutes'))
+app.use('/api/products', require('./routes/productRoutes'))
 
 
 app.use(errorHandler)
