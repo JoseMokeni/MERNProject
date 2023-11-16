@@ -243,6 +243,60 @@ const deleteUser = asyncHandler(async (req, res) => {
 
 })
 
+// @desc: Update a user
+// @route: PUT /api/users/:id
+// @access: Private
+
+const updateUser = asyncHandler(async (req, res) => {
+    const token = req.headers.authorization.split(' ')[1]
+    const decoded = jwt.verify(token, process.env.JWT_SECRET)
+
+    const id = req.query.id
+
+    console.log("Decoded")
+    console.log(decoded)
+
+    if (!decoded) {
+        res.status(401)
+        throw new Error('Invalid token')
+    }
+
+    // check if the user id matches the token id
+    if (decoded._id != id && decoded.role !== 'admin') {
+        res.status(401)
+        throw new Error('Invalid token')
+    }
+
+    const user = await User.findById(id)
+
+    if (user) {
+        user.name = req.body.name || user.name
+        user.phone = req.body.phone || user.phone
+        user.email = req.body.email || user.email
+
+        if (req.body.password) {
+            const salt = await bcrypt.genSalt(10)
+            user.password = await bcrypt.hash(req.body.password, salt)
+        }
+
+        const updatedUser = await user.save()
+
+        res.status(200)
+        res.json({
+            _id: updatedUser._id,
+            name: updatedUser.name,
+            phone: updatedUser.phone,
+            email: updatedUser.email,
+            role: updatedUser.role,
+            token: generateToken(updatedUser)
+        })
+    } else {
+        res.status(404)
+        throw new Error('User not found')
+    }
+
+})
+
 
 // token generator
 const generateToken = (user) => {
@@ -262,5 +316,6 @@ module.exports = {
     loginUser,
     getUser,
     getUsers,
-    deleteUser
+    deleteUser,
+    updateUser
 }
