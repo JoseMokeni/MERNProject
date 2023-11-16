@@ -3,6 +3,8 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const asyncHandler = require('express-async-handler')
 const cloudinary = require('cloudinary').v2
+const fs = require('fs');
+
 
 // @desc: Add a new product
 // @route: POST /api/products
@@ -52,6 +54,9 @@ const addProduct = asyncHandler(async (req, res) => {
 
     if (product) {
         res.status(201)
+        // remove temp file
+        fs.unlinkSync(image.tempFilePath);
+
         res.json({
             message: 'Product added successfully'
         })
