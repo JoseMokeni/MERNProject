@@ -105,12 +105,39 @@ const getProductById = asyncHandler(async (req, res) => {
     }
 })
 
+// @desc: Get products by owner
+// @route: GET /api/products/my-products
+// @access: Private
 
+const getProductsByOwner = asyncHandler(async (req, res) => {
+    const token = req.headers.authorization.split(' ')[1]
+    const decoded = jwt.verify(token, process.env.JWT_SECRET)
+
+    if (!decoded) {
+        res.status(401)
+        throw new Error('Invalid token')
+    }
+
+    const owner = decoded._id
+
+    // fetch the database
+    const products = await Product.find({owner})
+    
+    if (products) {
+        res.status(200)
+        res.json(products)
+    } else {
+        res.status(404)
+        throw new Error('No products found')
+    }
+
+})
 
 
 
 module.exports = {
     addProduct,
     getProducts,
-    getProductById
+    getProductById,
+    getProductsByOwner
 }
