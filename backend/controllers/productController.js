@@ -67,8 +67,50 @@ const addProduct = asyncHandler(async (req, res) => {
 
 })
 
+// @desc: Get all products
+// @route: GET /api/products
+// @access: Public
+
+const getProducts = asyncHandler(async (req, res) => {
+    const products = await Product.find({})
+
+    if (products) {
+        res.status(200)
+        res.json(products)
+    } else {
+        res.status(404)
+        throw new Error('No products found')
+    }
+})
+
+// @desc: Get a product by id
+// @route: GET /api/products/details
+// @access: Public
+
+const getProductById = asyncHandler(async (req, res) => {
+    const id = req.query.id
+    if (!id) {
+        res.status(400)
+        throw new Error('Please provide an id')
+    }
+
+    const product = await Product.findById(id)
+
+    if (product) {
+        res.status(200)
+        res.json(product)
+    } else {
+        res.status(404)
+        throw new Error('No product found')
+    }
+})
+
+
+
 
 
 module.exports = {
-    addProduct
+    addProduct,
+    getProducts,
+    getProductById
 }
