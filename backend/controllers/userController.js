@@ -79,11 +79,6 @@ const registerUser = asyncHandler(async (req, res) => {
 })
 
 
-// LOGIN DOESN'T WORK 
-// I HAVE NO IDEA WHY
-// BUT I HAVE TO FIX IT BEFORE MOVING ON
-
-
 // @desc: Auth user & get token
 // @route: POST /api/users/login
 // @access: Public
@@ -132,6 +127,10 @@ const loginUser = asyncHandler(async (req, res) => {
 // @route: GET /api/users/me/:id
 // @access: Private
 const getUser = asyncHandler(async (req, res) => {
+    if (tokenSended(req)){
+        res.status(401)
+        throw new Error('Invalid token')
+    }
     // get the id from the incoming request
     const id = req.query.id
     // console.log(req.query.id);
@@ -178,6 +177,10 @@ const getUser = asyncHandler(async (req, res) => {
 // @access: Private and only available to admins
 
 const getUsers = asyncHandler(async (req, res) => {
+    if (tokenSended(req)){
+        res.status(401)
+        throw new Error('Invalid token')
+    }
     const token = req.headers.authorization.split(' ')[1]
     const decoded = jwt.verify(token, process.env.JWT_SECRET)
 
@@ -207,6 +210,10 @@ const getUsers = asyncHandler(async (req, res) => {
 // @access: Private
 
 const deleteUser = asyncHandler(async (req, res) => {
+    if (tokenSended(req)){
+        res.status(401)
+        throw new Error('Invalid token')
+    }
     const token = req.headers.authorization.split(' ')[1]
     const decoded = jwt.verify(token, process.env.JWT_SECRET)
 
@@ -248,6 +255,10 @@ const deleteUser = asyncHandler(async (req, res) => {
 // @access: Private
 
 const updateUser = asyncHandler(async (req, res) => {
+    if (tokenSended(req)){
+        res.status(401)
+        throw new Error('Invalid token')
+    }
     const token = req.headers.authorization.split(' ')[1]
     const decoded = jwt.verify(token, process.env.JWT_SECRET)
 
@@ -309,6 +320,16 @@ const generateToken = (user) => {
     }, process.env.JWT_SECRET, {
         expiresIn: '1d'
     })
+}
+
+const tokenSended = (req) => {
+    // verify if the token is present in the headers
+    const authorization = req.headers.authorization
+    if (!authorization) {
+        return false
+    } 
+
+    return true
 }
 
 module.exports = {

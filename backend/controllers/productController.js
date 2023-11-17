@@ -24,6 +24,11 @@ const addProduct = asyncHandler(async (req, res) => {
         price,
         description
     } = req.body
+
+    if (!tokenSended(req)){
+        res.status(401)
+        throw new Error('Invalid token')
+    }
     
     const token = req.headers.authorization.split(' ')[1]
     const decoded = jwt.verify(token, process.env.JWT_SECRET)
@@ -110,6 +115,10 @@ const getProductById = asyncHandler(async (req, res) => {
 // @access: Private
 
 const getProductsByOwner = asyncHandler(async (req, res) => {
+    if (!tokenSended(req)){
+        res.status(401)
+        throw new Error('Invalid token')
+    }
     const token = req.headers.authorization.split(' ')[1]
     const decoded = jwt.verify(token, process.env.JWT_SECRET)
 
@@ -133,11 +142,72 @@ const getProductsByOwner = asyncHandler(async (req, res) => {
 
 })
 
+// @desc: Delete a product
+// @route: DELETE /api/products/:id
+// @access: Private
 
+const deleteProduct = asyncHandler(async (req, res) => {
+    if (!tokenSended(req)){
+        res.status(401)
+        throw new Error('Invalid token')
+    }
+    const token = req.headers.authorization.split(' ')[1]
+    const decoded = jwt.verify(token, process.env.JWT_SECRET)
+
+    console.log("Decoded")
+    console.log(decoded)
+
+    const id = req.query.id
+
+    console.log("id: " + id);
+
+    if (!id) {
+        res.status(400)
+        throw new Error('Please provide an id')
+    }
+
+    const product = await Product.findById(id)
+
+    if (!product) {
+        res.status(404)
+        throw new Error('No product found')
+    }
+
+    if (decoded._id != product.owner && decoded.role !== 'admin') {
+        res.status(401)
+        throw new Error('Invalid token')
+    }
+
+    // delete the product
+    const removedProduct = await Product.findByIdAndDelete(id)
+    if (removedProduct) {
+        res.status(200)
+    
+        res.json({
+            message: 'Product deleted successfully'
+        })
+    } else {
+        res.status(404)
+        throw new Error('An error occured while deleting the product')
+    
+    }
+
+})
+
+const tokenSended = (req) => {
+    // verify if the token is present in the headers
+    const authorization = req.headers.authorization
+    if (!authorization) {
+        return false
+    } 
+
+    return true
+}
 
 module.exports = {
     addProduct,
     getProducts,
     getProductById,
-    getProductsByOwner
+    getProductsByOwner,
+    deleteProduct
 }
