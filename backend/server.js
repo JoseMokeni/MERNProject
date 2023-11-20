@@ -37,6 +37,7 @@ mongoose.connect(process.env.MONGO_URI).then(() => {
 
 app.use('/api/users', require('./routes/userRoutes'))
 app.use('/api/products', require('./routes/productRoutes'))
+app.use('/api/categories', require('./routes/categoryRoutes'))
 
 
 app.use(errorHandler)

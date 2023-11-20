@@ -27,11 +27,6 @@ const registerUser = asyncHandler(async (req, res) => {
         throw new Error('Please fill all the fields')
     }
 
-    // if (role !== 'user'){
-    //     res.status(400)
-    //     throw new Error('You cannot register as a non-user')
-    // }
-
     // encrypt the password
     const salt = await bcrypt.genSalt(10)
     password = await bcrypt.hash(password, salt)
@@ -124,36 +119,21 @@ const loginUser = asyncHandler(async (req, res) => {
 })
 
 // @desc: Get user profile
-// @route: GET /api/users/me/:id
+// @route: GET /api/users/:id
 // @access: Private
 const getUser = asyncHandler(async (req, res) => {
-    if (tokenSended(req)){
-        res.status(401)
-        throw new Error('Invalid token')
-    }
-    // get the id from the incoming request
-    const id = req.query.id
-    // console.log(req.query.id);
+    const id = req.params.id
 
     const user = await User.findById(id)
-    // console.log('User found');
-    // console.log(user);
-    const token = req.headers.authorization.split(' ')[1]
-    
 
     if (user) {
-        // decode the token
-        const decoded = jwt.verify(token, process.env.JWT_SECRET)
-        // console.log(decoded)
-        
-        // check token validity
-        if (!decoded) {
-            res.status(401)
-            throw new Error('Invalid token')
-        }
 
         // check if the user id matches the token id
-        if (decoded._id != user._id && decoded.role !== 'admin') {
+        console.log(req.user._id)
+        console.log(user._id)
+        console.log(req.user.role)
+        console.log(req.user._id.toString() != user._id.toString())
+        if (req.user._id.toString() != user._id.toString() && req.user.role !== 'admin') {
             res.status(401)
             throw new Error('Invalid token')
         }
@@ -177,19 +157,10 @@ const getUser = asyncHandler(async (req, res) => {
 // @access: Private and only available to admins
 
 const getUsers = asyncHandler(async (req, res) => {
-    if (tokenSended(req)){
-        res.status(401)
-        throw new Error('Invalid token')
-    }
-    const token = req.headers.authorization.split(' ')[1]
-    const decoded = jwt.verify(token, process.env.JWT_SECRET)
 
-    if (!decoded) {
-        res.status(401)
-        throw new Error('Invalid token')
-    }
+    const user = req.user
 
-    if (decoded.role !== 'admin') {
+    if (user.role !== 'admin') {
         res.status(401)
         throw new Error('Invalid token')
     }
@@ -210,26 +181,12 @@ const getUsers = asyncHandler(async (req, res) => {
 // @access: Private
 
 const deleteUser = asyncHandler(async (req, res) => {
-    if (tokenSended(req)){
-        res.status(401)
-        throw new Error('Invalid token')
-    }
-    const token = req.headers.authorization.split(' ')[1]
-    const decoded = jwt.verify(token, process.env.JWT_SECRET)
 
-    // console.log("Decoded")
-    // console.log(decoded)
+    const id = req.params.id
 
+    const user = req.user
 
-    const id = req.query.id
-    // console.log(id)
-
-    if (!decoded) {
-        res.status(401)
-        throw new Error('Invalid token')
-    }
-
-    if (decoded.role !== 'admin' && decoded._id !== req.params.id) {
+    if (user.role !== 'admin' && user._id != id) {
         res.status(401)
         throw new Error('Invalid token')
     }
@@ -255,25 +212,10 @@ const deleteUser = asyncHandler(async (req, res) => {
 // @access: Private
 
 const updateUser = asyncHandler(async (req, res) => {
-    if (tokenSended(req)){
-        res.status(401)
-        throw new Error('Invalid token')
-    }
-    const token = req.headers.authorization.split(' ')[1]
-    const decoded = jwt.verify(token, process.env.JWT_SECRET)
-
-    const id = req.query.id
-
-    console.log("Decoded")
-    console.log(decoded)
-
-    if (!decoded) {
-        res.status(401)
-        throw new Error('Invalid token')
-    }
+    const id = req.params.id
 
     // check if the user id matches the token id
-    if (decoded._id != id && decoded.role !== 'admin') {
+    if (req.user._id != id && req.user.role != 'admin') {
         res.status(401)
         throw new Error('Invalid token')
     }
