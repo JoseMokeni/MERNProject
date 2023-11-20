@@ -207,7 +207,7 @@ const deleteProduct = asyncHandler(async (req, res) => {
     console.log("Decoded")
     console.log(decoded)
 
-    const id = req.query.id
+    const id = req.params.id
 
     console.log("id: " + id);
 
@@ -244,6 +244,83 @@ const deleteProduct = asyncHandler(async (req, res) => {
 
 })
 
+// @desc: Update product
+// @route: PUT /api/products/:id
+// @access: PRIVATE
+
+const updateProduct = asyncHandler(async (req, res) => {
+    if (!tokenSended(req)){
+        res.status(401)
+        throw new Error('Invalid token')
+    }
+    const token = req.headers.authorization.split(' ')[1]
+    const decoded = jwt.verify(token, process.env.JWT_SECRET)
+
+    console.log("Decoded")
+    console.log(decoded)
+
+    const id = req.params.id
+
+    console.log("id: " + id);
+
+    if (!id) {
+        res.status(400)
+        throw new Error('Please provide an id')
+    }
+
+    const product = await Product.findById(id)
+
+    if (!product) {
+        res.status(404)
+        throw new Error('No product found with this id')
+    }
+
+    if (decoded._id != product.owner && decoded.role !== 'admin') {
+        res.status(401)
+        throw new Error('Invalid token')
+    }
+
+    const newData = {
+        name: req.body.name || product.name,
+        price: req.body.price || product.price,
+        description: req.body.description || product.description,
+        category: req.body.category || product.category
+    }
+
+    // image
+    if (req.files) {
+        const image = req.files.image
+        const uploadedImage = await cloudinary.uploader.upload(image.tempFilePath)
+        imageURL = uploadedImage.secure_url
+        newData.image = imageURL
+    } else {
+        newData.image = product.image
+    }
+
+    // update the product
+    product.name = newData.name
+    product.price = newData.price
+    product.description = newData.description
+    product.category = newData.category
+    product.image = newData.image
+
+    const updatedProduct = await product.save()
+
+    if (updatedProduct) {
+        res.status(200)
+    
+        res.json({
+            message: 'Product updated successfully'
+        })
+    } else {
+        res.status(404)
+        throw new Error('An error occured while updating the product')
+    
+    }
+
+    
+})
+
 const tokenSended = (req) => {
     // verify if the token is present in the headers
     const authorization = req.headers.authorization
@@ -261,5 +338,6 @@ module.exports = {
     getMyproducts,
     deleteProduct,
     getProductsByOwner,
-    getProductsByCategory
+    getProductsByCategory,
+    updateProduct
 }
