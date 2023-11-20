@@ -89,11 +89,11 @@ const getProducts = asyncHandler(async (req, res) => {
 })
 
 // @desc: Get a product by id
-// @route: GET /api/products/details
+// @route: GET /api/products/:id
 // @access: Public
 
 const getProductById = asyncHandler(async (req, res) => {
-    const id = req.query.id
+    const id = req.params.id
     if (!id) {
         res.status(400)
         throw new Error('Please provide an id')
@@ -110,11 +110,11 @@ const getProductById = asyncHandler(async (req, res) => {
     }
 })
 
-// @desc: Get products by owner
+// @desc: Get my products
 // @route: GET /api/products/my-products
 // @access: Private
 
-const getProductsByOwner = asyncHandler(async (req, res) => {
+const getMyproducts = asyncHandler(async (req, res) => {
     if (!tokenSended(req)){
         res.status(401)
         throw new Error('Invalid token')
@@ -141,6 +141,31 @@ const getProductsByOwner = asyncHandler(async (req, res) => {
     }
 
 })
+
+// @desc: Get products by owner
+// @route: GET /api/products/owner/:id
+// @access: Public
+
+const getProductsByOwner = asyncHandler(async (req, res) => {
+    const id = req.params.id
+    if (!id) {
+        res.status(400)
+        throw new Error('Please provide an id')
+    }
+
+    // fetch the database
+    const products = await Product.find({owner: id})
+    
+    if (products) {
+        res.status(200)
+        res.json(products)
+    } else {
+        res.status(404)
+        throw new Error('No products found')
+    }
+
+})
+
 
 // @desc: Delete a product
 // @route: DELETE /api/products/:id
@@ -208,6 +233,7 @@ module.exports = {
     addProduct,
     getProducts,
     getProductById,
-    getProductsByOwner,
-    deleteProduct
+    getMyproducts,
+    deleteProduct,
+    getProductsByOwner
 }
