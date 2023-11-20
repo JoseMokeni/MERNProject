@@ -6,6 +6,7 @@ const {errorHandler} = require('./middlewares/errorMiddleware')
 const PORT = process.env.PORT || 3001
 const mongoose = require('mongoose')
 const expressFileUpload = require('express-fileupload')
+const createCategories = require('./utils/createCategories')
 
 // cloudinary config
 
@@ -26,10 +27,12 @@ app.use(expressFileUpload({
 
 // mongoose connection
 mongoose.connect(process.env.MONGO_URI).then(() => {
+    createCategories()
     console.log('MongoDB connected')
 }).catch((err) => {
     console.log(err)
 })
+
 
 
 app.use('/api/users', require('./routes/userRoutes'))

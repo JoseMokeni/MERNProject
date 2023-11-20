@@ -12,7 +12,7 @@ const fs = require('fs');
 
 const addProduct = asyncHandler(async (req, res) => {
     // check if one of the fields is empty
-    const fieldsEmpty = !req.body.name || !req.body.price || !req.body.description || !req.files.image
+    const fieldsEmpty = !req.body.name || !req.body.price || !req.body.description || !req.files.image || !req.body.category
 
     if (fieldsEmpty) {
         res.status(400)
@@ -22,7 +22,8 @@ const addProduct = asyncHandler(async (req, res) => {
     let {
         name,
         price,
-        description
+        description,
+        category
     } = req.body
 
     if (!tokenSended(req)){
@@ -52,7 +53,8 @@ const addProduct = asyncHandler(async (req, res) => {
         price,
         description,
         image: imageURL,
-        owner
+        owner,
+        category
     }
 
     const product = await Product.create(productToAdd)
@@ -107,6 +109,29 @@ const getProductById = asyncHandler(async (req, res) => {
     } else {
         res.status(404)
         throw new Error('No product found')
+    }
+})
+
+// @desc: Get products by category
+// @route: GET /api/products/category/:category
+// @access: Public
+
+const getProductsByCategory = asyncHandler(async (req, res) => {
+    
+    const category = req.params.category
+    if (!category) {
+        res.status(400)
+        throw new Error('Please provide a category')
+    }
+
+    const products = await Product.find({category})
+
+    if (products) {
+        res.status(200)
+        res.json(products)
+    } else {
+        res.status(404)
+        throw new Error('No products found for this category')
     }
 })
 
@@ -235,5 +260,6 @@ module.exports = {
     getProductById,
     getMyproducts,
     deleteProduct,
-    getProductsByOwner
+    getProductsByOwner,
+    getProductsByCategory
 }
