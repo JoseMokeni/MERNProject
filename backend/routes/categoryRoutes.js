@@ -11,4 +11,17 @@ router.get(
   })
 );
 
+router.get(
+  "/:id",
+  asyncHandler(async (req, res) => {
+    console.log(req.params.id);
+    const category = await Category.findById(req.params.id);
+    if (category) {
+      res.json(category);
+    } else {
+      res.status(404).json({ message: "Category not found" });
+    }
+  })
+);
+
 module.exports = router;

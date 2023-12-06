@@ -1,8 +1,8 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useSelector, useDispatch } from "react-redux";
-import { login } from "../features/auth/authSlice";
+import { login, reset } from "../features/auth/authSlice";
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -17,9 +17,23 @@ const Login = () => {
   };
 
   const dispatch = useDispatch();
-  const { user, isLoading, isSuccess, message } = useSelector(
+  const navigate = useNavigate();
+
+  const { user, isLoading, isSuccess, isError, message } = useSelector(
     (state) => state.auth
   );
+
+  useEffect(() => {
+    if (isError) {
+      toast.error(message);
+    }
+    if (isSuccess || user) {
+      // toast.success("Logged in successfully");
+      navigate("/");
+    }
+
+    dispatch(reset());
+  }, [isError, isSuccess, message, user, navigate, dispatch]);
 
   const onSubmit = (e) => {
     e.preventDefault();

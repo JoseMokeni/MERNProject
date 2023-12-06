@@ -11,6 +11,7 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 // toasts
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Product from "./pages/Product";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/termsandconditions" element={<TermsAndConditions />} />
+          <Route path="/products/:id" element={<Product />} />
           {/* Not found 404 page */}
           <Route path="*" element={<NotFound />} />
         </Routes>

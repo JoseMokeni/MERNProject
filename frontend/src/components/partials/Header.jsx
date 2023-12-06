@@ -1,20 +1,15 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useState, useEffect } from "react";
+import { logout, reset } from "../../features/auth/authSlice";
 
 const Header = () => {
+  const navigate = useNavigate();
+
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
 
-  const [isTokenValid, setIsTokenValid] = useState(false);
-
-  useEffect(() => {
-    if (user) {
-      setIsTokenValid(true);
-    }
-  }
-  , [user]);
 
   return (
     <nav className="bg-gray-100 shadow border-gray-200 px-2 sm:px-4 py-2.5 rounded dark:bg-gray-900">
@@ -154,16 +149,20 @@ const Header = () => {
               </Link>
             </li>
             <li>
-              {isTokenValid ? (
-                <Link
-                  to="/logout"
+              {user ? (
+                <button
                   className="block py-2 pl-3 pr-4 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
+                  onClick={() => {
+                    dispatch(logout());
+                    dispatch(reset());
+                    navigate("/");
+                  }}
                 >
                   Logout
-                </Link>
+                </button>
               ) : (
                 <Link
-                  to="/signin"
+                  to="/login"
                   className="block py-2 pl-3 pr-4 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
                 >
                   Login

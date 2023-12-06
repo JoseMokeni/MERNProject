@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import authService from "./authService";
 
 // Get user from local storage
-const user = JSON.parse(localStorage.getItem("user"));
+const user = localStorage.getItem("user");
 
 // check if token is expired
 const isTokenExpired = (token) => {
@@ -11,11 +11,11 @@ const isTokenExpired = (token) => {
   }
   const decoded = JSON.parse(atob(token.split(".")[1]));
   const currentTime = Date.now() / 1000;
-  console.log(decoded.exp, currentTime);
+  // console.log(decoded.exp, currentTime);
   return decoded.exp < currentTime;
 };
 
-if (user && isTokenExpired(user.token)) {
+if (user && isTokenExpired(user)) {
   localStorage.removeItem("user");
   user = null;
 }
@@ -47,7 +47,23 @@ export const register = createAsyncThunk(
 );
 
 export const login = createAsyncThunk("auth/login", async (user, thunkAPI) => {
-  console.log(user);
+  try {
+    const response = await authService.login(user);
+    return response.data.token;
+  } catch (error) {
+    const message =
+      (error.response &&
+        error.response.data &&
+        error.response.data.message) ||
+      error.message ||
+      error.toString();
+    return thunkAPI.rejectWithValue(message);
+  }
+});
+
+// Logout a user
+export const logout = createAsyncThunk("auth/logout", async () => {
+  await authService.logout();
 });
 
 export const authSlice = createSlice({
@@ -76,6 +92,24 @@ export const authSlice = createSlice({
         state.isLoading = false;
         state.isError = true;
         state.message = action.payload;
+        state.user = null;
+      })
+      .addCase(login.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(login.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.user = action.payload;
+        state.message = "Successfull registration";
+      })
+      .addCase(login.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
+        state.user = null;
+      })
+      .addCase(logout.fulfilled, (state) => {
         state.user = null;
       });
   },

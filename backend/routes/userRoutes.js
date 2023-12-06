@@ -16,7 +16,8 @@ router.get("/", protect, getUsers);
 
 router.post("/login", loginUser);
 
-router.get("/:id", protect, getUser);
+router.get("/:id", getUser);
+// router.get("/:id", protect, getUser);
 // TODO
 
 router.delete("/:id", protect, deleteUser);

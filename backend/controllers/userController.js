@@ -125,18 +125,19 @@ const getUser = asyncHandler(async (req, res) => {
     const id = req.params.id
 
     const user = await User.findById(id)
+    console.log(user)
 
     if (user) {
 
         // check if the user id matches the token id
-        console.log(req.user._id)
-        console.log(user._id)
-        console.log(req.user.role)
-        console.log(req.user._id.toString() != user._id.toString())
-        if (req.user._id.toString() != user._id.toString() && req.user.role !== 'admin') {
-            res.status(401)
-            throw new Error('Invalid token')
-        }
+        // console.log(req.user._id)
+        // console.log(user._id)
+        // console.log(req.user.role)
+        // console.log(req.user._id.toString() != user._id.toString())
+        // if (req.user._id.toString() != user._id.toString() && req.user.role !== 'admin') {
+        //     res.status(401)
+        //     throw new Error('Invalid token')
+        // }
 
         res.status(200)
         res.json({

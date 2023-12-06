@@ -19,6 +19,11 @@ const productSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Image is required']
     },
+    status: {
+        type: String,
+        enum: ['available', 'sold'],
+        default: 'available'
+    },
     owner: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'

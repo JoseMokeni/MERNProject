@@ -182,7 +182,7 @@ const deleteProduct = asyncHandler(async (req, res) => {
     throw new Error("No product found");
   }
 
-  if (req.user._id != product.owner && req.user.role !== "admin") {
+  if (req.user._id != product.owner.toString() && req.user.role !== "admin") {
     res.status(401);
     throw new Error("Invalid token");
   }
@@ -224,8 +224,11 @@ const updateProduct = asyncHandler(async (req, res) => {
     res.status(404);
     throw new Error("No product found with this id");
   }
+  console.log("product: " + product);
+  console.log("req.user._id: " + req.user._id);
+  console.log(req.user._id != product.owner.toString());
 
-  if (req.user._id != product.owner && req.user.role !== "admin") {
+  if (req.user._id != product.owner.toString() && req.user.role !== "admin") {
     res.status(401);
     throw new Error("Invalid token");
   }
@@ -235,11 +238,17 @@ const updateProduct = asyncHandler(async (req, res) => {
     price: req.body.price || product.price,
     description: req.body.description || product.description,
     category: req.body.category || product.category,
+    status: req.body.status || product.status,
   };
+
+  console.log(req.files.image);
+
+  let image;
 
   // image
   if (req.files) {
-    const image = req.files.image;
+    console.log("inside if");
+    image = req.files.image;
     const uploadedImage = await cloudinary.uploader.upload(image.tempFilePath);
     imageURL = uploadedImage.secure_url;
     newData.image = imageURL;
@@ -253,13 +262,16 @@ const updateProduct = asyncHandler(async (req, res) => {
   product.description = newData.description;
   product.category = newData.category;
   product.image = newData.image;
+  product.status = newData.status;
 
   const updatedProduct = await product.save();
 
   if (updatedProduct) {
     res.status(200);
     // remove temp file
-    fs.unlinkSync(image.tempFilePath);
+    if (req.files) {
+      fs.unlinkSync(image.tempFilePath);
+    }
     res.json({
       message: "Product updated successfully",
     });
