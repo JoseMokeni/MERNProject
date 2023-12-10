@@ -134,6 +134,9 @@ const Product = () => {
     // getOwnerName();
     // getCategory();
     // decode the token to get the user id
+
+    // if the user is not set, return nothing to avoid errors
+    if (!user) return;
     const token = user;
     const decodedToken = JSON.parse(atob(token.split(".")[1]));
     const userId = decodedToken._id;
@@ -153,7 +156,7 @@ const Product = () => {
           <div class="mt-5 flex md:mt-0 md:ml-4">
             <span class="hidden sm:block">
               <Link
-                to={`/products/edit/${product.id}`}
+                to={`/products/edit/${id}`}
                 class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
               >
                 Edit product details

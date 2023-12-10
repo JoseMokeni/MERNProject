@@ -12,25 +12,30 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Product from "./pages/Product";
+import EditProduct from "./pages/EditProduct";
+import MyProducts from "./pages/MyProducts";
+import AddProduct from "./pages/AddProduct";
 
 function App() {
   return (
     <>
       <Router>
-      <Header />
+        <Header />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/termsandconditions" element={<TermsAndConditions />} />
+          <Route path="/products/add" element={<AddProduct />} />
           <Route path="/products/:id" element={<Product />} />
+          <Route path="/products/edit/:id" element={<EditProduct />} />
+          <Route path="/products/mine" element={<MyProducts />} />
           {/* Not found 404 page */}
           <Route path="*" element={<NotFound />} />
         </Routes>
-      <Footer />
+        <Footer />
       </Router>
       <ToastContainer />
-    
     </>
   );
 }

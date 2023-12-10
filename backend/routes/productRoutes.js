@@ -15,11 +15,12 @@ const protect = require("../middlewares/authMiddleware");
 
 router.post("/", protect, addProduct);
 
+router.get("/my-products", protect, getMyproducts);
+
 router.get("/:id", getProductById);
 
 router.get("/", getProducts);
 
-router.get("/my-products", protect, getMyproducts);
 
 router.get("/owner/:id", getProductsByOwner);
 

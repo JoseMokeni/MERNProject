@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 const asyncHandler = require("express-async-handler");
 const cloudinary = require("cloudinary").v2;
 const fs = require("fs");
+const { findByIdAndUpdate } = require("../models/User");
 
 // @desc: Add a new product
 // @route: POST /api/products
@@ -17,6 +18,9 @@ const addProduct = asyncHandler(async (req, res) => {
     !req.body.description ||
     !req.files.image ||
     !req.body.category;
+
+  // console.log(req.body);
+  // console.log(req.files);
 
   if (fieldsEmpty) {
     res.status(400);
@@ -52,6 +56,7 @@ const addProduct = asyncHandler(async (req, res) => {
 
     res.json({
       message: "Product added successfully",
+      product,
     });
   } else {
     res.status(400);
@@ -64,7 +69,17 @@ const addProduct = asyncHandler(async (req, res) => {
 // @access: Public
 
 const getProducts = asyncHandler(async (req, res) => {
-  const products = await Product.find({});
+  // check if a keyword is provided in the query as get parameter
+  const keyword = req.query.keyword;
+  let products;
+
+  // if a keyword is provided
+  if (keyword) {
+    // search for products that contain the keyword in their name
+    products = await Product.find({ name: { $regex: keyword, $options: "i" } });
+  } else {
+    products = await Product.find({});
+  }
 
   if (products) {
     res.status(200);
@@ -125,9 +140,12 @@ const getProductsByCategory = asyncHandler(async (req, res) => {
 
 const getMyproducts = asyncHandler(async (req, res) => {
   const owner = req.user._id;
+  // console.log("owner: " + owner);
 
   // fetch the database
   const products = await Product.find({ owner });
+
+  // console.log(owner);
 
   if (products) {
     res.status(200);
@@ -224,9 +242,9 @@ const updateProduct = asyncHandler(async (req, res) => {
     res.status(404);
     throw new Error("No product found with this id");
   }
-  console.log("product: " + product);
-  console.log("req.user._id: " + req.user._id);
-  console.log(req.user._id != product.owner.toString());
+  // console.log("product: " + product);
+  // console.log("req.user._id: " + req.user._id);
+  // console.log(req.user._id != product.owner.toString());
 
   if (req.user._id != product.owner.toString() && req.user.role !== "admin") {
     res.status(401);
@@ -240,8 +258,9 @@ const updateProduct = asyncHandler(async (req, res) => {
     category: req.body.category || product.category,
     status: req.body.status || product.status,
   };
+  // console.log(newData);
 
-  console.log(req.files.image);
+  // console.log(req.files.image);
 
   let image;
 
@@ -264,7 +283,11 @@ const updateProduct = asyncHandler(async (req, res) => {
   product.image = newData.image;
   product.status = newData.status;
 
-  const updatedProduct = await product.save();
+  console.log(newData);
+
+  // const updatedProduct = await product.save();
+
+  const updatedProduct = await Product.findOneAndUpdate({ _id: id }, newData);
 
   if (updatedProduct) {
     res.status(200);
