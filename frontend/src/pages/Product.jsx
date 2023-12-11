@@ -26,7 +26,9 @@ const Product = () => {
 
   const fetchProductData = async () => {
     try {
-      let response = await axios.get(`/api/products/${id}`);
+      let response = await axios.get(
+        `https://marketplace-crud.onrender.com/api/products/${id}`
+      );
       let { data } = response;
       // console.log(data);
       let { name, description, price, image, category, owner, status } = data;
@@ -41,14 +43,18 @@ const Product = () => {
         status,
       });
       // console.log(product);
-      response = await axios.get(`/api/categories/${category}`);
+      response = await axios.get(
+        `https://marketplace-crud.onrender.com/api/categories/${category}`
+      );
       // console.log(response);
       data = response.data;
       const { name: categoryName } = data;
       // console.log(categoryName);
       // setProduct({ ...product, category: categoryName });
 
-      response = await axios.get(`/api/users/${owner}`);
+      response = await axios.get(
+        `https://marketplace-crud.onrender.com/api/users/${owner}`
+      );
       data = response.data;
       // console.log(data);
       const { phone: ownerPhone } = data;
@@ -65,19 +71,18 @@ const Product = () => {
         ownerPhone: ownerPhone,
         status,
       });
-      
     } catch (err) {
       console.log(err);
       toast.error(err.message);
     }
-
-
   };
 
   const getCategory = async () => {
     try {
       // console.log(product.category);
-      const response = await axios.get(`/api/categories/${product.category}`);
+      const response = await axios.get(
+        `https://marketplace-crud.onrender.com/api/categories/${product.category}`
+      );
       const { data } = response;
       const { name } = data;
       setProduct({ ...product, category: name });
@@ -89,7 +94,9 @@ const Product = () => {
 
   const getOwnerName = async (ownerId) => {
     try {
-      const response = await axios.get(`/api/users/${ownerId}`);
+      const response = await axios.get(
+        `https://marketplace-crud.onrender.com/api/users/${ownerId}`
+      );
       const { data } = response;
       const { name } = data;
       setProduct({ ...product, owner: name });
@@ -98,7 +105,6 @@ const Product = () => {
       toast.error(err.message);
     }
   };
-
 
   // delete product action
   const onDelete = async () => {
@@ -110,24 +116,24 @@ const Product = () => {
         const trimmedToken = user.replace(/['"]+/g, "");
         const bearerToken = `Bearer ${trimmedToken}`;
         console.log(bearerToken);
-        const response = await axios.delete(`/api/products/${id}`, {
-          headers: {
-            Authorization: bearerToken,
-          },
-        });
+        const response = await axios.delete(
+          `https://marketplace-crud.onrender.com/api/products/${id}`,
+          {
+            headers: {
+              Authorization: bearerToken,
+            },
+          }
+        );
 
         // toast a success message while navigating to the home page
         toast.success("Product deleted successfully");
         navigate("/");
-        
       }
-    }
-    catch (err) {
+    } catch (err) {
       console.log(err);
       toast.error(err.message);
     }
   };
-
 
   useEffect(() => {
     fetchProductData();
@@ -200,7 +206,6 @@ const Product = () => {
                 Owner phone
               </h4>
               <p class="mt-2 text-gray-600">{product.ownerPhone}</p>
-
             </div>
           </div>
         </div>

@@ -33,13 +33,17 @@ const AddProduct = () => {
     formData.append("status", product.status);
 
     try {
-        const trimmedToken = user.replace(/['"]+/g, "");
-        const bearerToken = `Bearer ${trimmedToken}`;
-      const response = await axios.post("/api/products", formData, {
-        headers: {
-          Authorization: bearerToken,
-        },
-      });
+      const trimmedToken = user.replace(/['"]+/g, "");
+      const bearerToken = `Bearer ${trimmedToken}`;
+      const response = await axios.post(
+        "https://marketplace-crud.onrender.com/api/products",
+        formData,
+        {
+          headers: {
+            Authorization: bearerToken,
+          },
+        }
+      );
       const { data } = response;
       toast.success("Product added successfully");
       navigate(`/products/${data.product._id}`);
@@ -57,7 +61,9 @@ const AddProduct = () => {
 
     const fetchCategories = async () => {
       try {
-        const response = await axios.get("/api/categories");
+        const response = await axios.get(
+          "https://marketplace-crud.onrender.com/api/categories"
+        );
         const { data } = response;
         setCategories(data);
       } catch (error) {
@@ -154,14 +160,7 @@ const AddProduct = () => {
             {/* Categories */}
             {/* The category of the product will be selected */}
             {categories.map((category) => {
-              return (
-                <option
-                  value={category._id}
-                  
-                >
-                  {category.name}
-                </option>
-              );
+              return <option value={category._id}>{category.name}</option>;
             })}
           </select>
         </div>

@@ -9,7 +9,7 @@ const Home = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/products")
+    fetch("https://marketplace-crud.onrender.com/api/products")
       .then((res) => res.json())
       .then((data) => setProducts(data));
     setIsLoading(false);
@@ -17,7 +17,9 @@ const Home = () => {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    fetch(`/api/products?keyword=${keyword}`)
+    fetch(
+      `https://marketplace-crud.onrender.com/api/products?keyword=${keyword}`
+    )
       .then((res) => res.json())
       .then((data) => {
         setProducts(data);

@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "/api/users";
+const API_URL = "https://marketplace-crud.onrender.com/api/users";
 
 // Register a new user
 const register = async (user) => {
