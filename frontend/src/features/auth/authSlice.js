@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import authService from "./authService";
 
 // Get user from local storage
-const user = localStorage.getItem("user");
+let user = localStorage.getItem("user");
 
 // check if token is expired
 const isTokenExpired = (token) => {
