@@ -1,7 +1,7 @@
 {
   "name": "frontend",
   "version": "0.1.0",
-  "proxy": "https://marketplace-crud.onrender.com/",
+  "proxy": "https://marketplace-crud.onrender.com",
   "private": true,
   "dependencies": {
     "@heroicons/react": "^2.0.18",
