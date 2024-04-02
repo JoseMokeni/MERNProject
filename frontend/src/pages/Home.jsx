@@ -9,7 +9,7 @@ const Home = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/products")
+    fetch("http://localhost:5000/api/products")
       .then((res) => res.json())
       .then((data) => setProducts(data));
     setIsLoading(false);
@@ -17,7 +17,7 @@ const Home = () => {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    fetch(`/api/products?keyword=${keyword}`)
+    fetch(`http://localhost:5000/api/products?keyword=${keyword}`)
       .then((res) => res.json())
       .then((data) => {
         setProducts(data);

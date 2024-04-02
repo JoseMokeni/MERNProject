@@ -36,7 +36,9 @@ const EditProduct = () => {
 
     const fetchProductData = async () => {
       try {
-        let response = await axios.get(`/api/products/${id}`);
+        let response = await axios.get(
+          `http://localhost:5000/api/products/${id}`
+        );
         let { data } = response;
         // console.log(data);
         let { name, description, price, image, category, owner, status } = data;
@@ -51,14 +53,16 @@ const EditProduct = () => {
           status,
         });
         // console.log(product);
-        response = await axios.get(`/api/categories/${category}`);
+        response = await axios.get(
+          `http://localhost:5000/api/categories/${category}`
+        );
         // console.log(response);
         data = response.data;
         const { name: categoryName } = data;
         // console.log(categoryName);
         // setProduct({ ...product, category: categoryName });
 
-        response = await axios.get(`/api/users/${owner}`);
+        response = await axios.get(`http://localhost:5000/api/users/${owner}`);
         data = response.data;
         // console.log(data);
         const { phone: ownerPhone } = data;
@@ -83,7 +87,9 @@ const EditProduct = () => {
 
     const fetchCategories = async () => {
       try {
-        const response = await axios.get("/api/categories");
+        const response = await axios.get(
+          "http://localhost:5000/api/categories"
+        );
         const { data } = response;
         setCategories(data);
       } catch (error) {
@@ -115,11 +121,15 @@ const EditProduct = () => {
     try {
       const trimmedToken = user.replace(/['"]+/g, "");
       const bearerToken = `Bearer ${trimmedToken}`;
-      const response = await axios.put(`/api/products/${id}`, formData, {
-        headers: {
-          Authorization: bearerToken,
-        },
-      });
+      const response = await axios.put(
+        `http://localhost:5000/api/products/${id}`,
+        formData,
+        {
+          headers: {
+            Authorization: bearerToken,
+          },
+        }
+      );
       const { data } = response;
       toast.success("Product updated successfully");
       navigate(`/products/${id}`);

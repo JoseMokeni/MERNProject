@@ -20,16 +20,19 @@ const MyProducts = () => {
 
     const fetchProducts = async () => {
       try {
-        // send GET to /api/products/my-products with the token in the header
+        // send GET to http://localhost:5000/api/products/my-products with the token in the header
         const trimmedToken = user.replace(/['"]+/g, "");
         const bearerToken = `Bearer ${trimmedToken}`;
         // console.log(bearerToken);
 
-        const response = await axios.get("/api/products/my-products", {
-          headers: {
-            Authorization: bearerToken,
-          },
-        });
+        const response = await axios.get(
+          "http://localhost:5000/api/products/my-products",
+          {
+            headers: {
+              Authorization: bearerToken,
+            },
+          }
+        );
         const { data } = response;
         // console.log(data);
         setProducts(data);

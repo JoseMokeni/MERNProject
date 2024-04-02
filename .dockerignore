@@ -1,8 +1,0 @@
-node_modules
-frontend/node_modules
-.env
-tmp
-.git
-.gitignore
-package-lock.json
-readme.md
