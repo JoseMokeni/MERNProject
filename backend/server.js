@@ -9,6 +9,8 @@ const mongoose = require("mongoose");
 const expressFileUpload = require("express-fileupload");
 const createCategories = require("./utils/createCategories");
 
+// console.log(process.env);
+
 const { MONGO_HOST, MONGO_USER, MONGO_PASSWORD, MONGO_DB, MONGO_PORT } =
   process.env;
 

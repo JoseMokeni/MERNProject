@@ -6,3 +6,5 @@ backend/.env
 backend/tmp
 backend/package-lock.json
 frontend/node_modules
+data
+docker-compose-local.yml
