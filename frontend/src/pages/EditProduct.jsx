@@ -4,6 +4,13 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
 
+// get API ENDPOINT from .env file
+
+const API_ENDPOINT = process.env.REACT_APP_API_HOST;
+const API_PORT = process.env.REACT_APP_API_PORT;
+
+const API_URL = `${API_ENDPOINT}:${API_PORT}/api`;
+
 const EditProduct = () => {
   const { user } = useSelector((state) => state.auth);
 
@@ -37,7 +44,7 @@ const EditProduct = () => {
     const fetchProductData = async () => {
       try {
         let response = await axios.get(
-          `http://localhost:5000/api/products/${id}`
+          `${API_URL}/products/${id}`
         );
         let { data } = response;
         // console.log(data);
@@ -54,7 +61,7 @@ const EditProduct = () => {
         });
         // console.log(product);
         response = await axios.get(
-          `http://localhost:5000/api/categories/${category}`
+          `${API_URL}/categories/${category}`
         );
         // console.log(response);
         data = response.data;
@@ -62,7 +69,7 @@ const EditProduct = () => {
         // console.log(categoryName);
         // setProduct({ ...product, category: categoryName });
 
-        response = await axios.get(`http://localhost:5000/api/users/${owner}`);
+        response = await axios.get(`${API_URL}/users/${owner}`);
         data = response.data;
         // console.log(data);
         const { phone: ownerPhone } = data;
@@ -88,7 +95,7 @@ const EditProduct = () => {
     const fetchCategories = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:5000/api/categories"
+          `${API_URL}/categories`
         );
         const { data } = response;
         setCategories(data);
@@ -122,7 +129,7 @@ const EditProduct = () => {
       const trimmedToken = user.replace(/['"]+/g, "");
       const bearerToken = `Bearer ${trimmedToken}`;
       const response = await axios.put(
-        `http://localhost:5000/api/products/${id}`,
+        `${API_URL}/products/${id}`,
         formData,
         {
           headers: {

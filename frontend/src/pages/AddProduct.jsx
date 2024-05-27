@@ -4,6 +4,13 @@ import { useNavigate, Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import axios from "axios";
 
+// get API ENDPOINT from .env file
+
+const API_ENDPOINT = process.env.REACT_APP_API_HOST;
+const API_PORT = process.env.REACT_APP_API_PORT;
+
+const API_URL = `${API_ENDPOINT}:${API_PORT}/api`;
+
 const AddProduct = () => {
   const [product, setProduct] = useState({
     name: "",
@@ -35,15 +42,12 @@ const AddProduct = () => {
     try {
       const trimmedToken = user.replace(/['"]+/g, "");
       const bearerToken = `Bearer ${trimmedToken}`;
-      const response = await axios.post(
-        "http://localhost:5000/api/products",
-        formData,
-        {
-          headers: {
-            Authorization: bearerToken,
-          },
-        }
-      );
+      const response = await axios.post(`${API_URL}/products`, formData, {
+        headers: {
+          Authorization: bearerToken,
+        },
+      });
+      console.log(response);
       const { data } = response;
       toast.success("Product added successfully");
       navigate(`/products/${data.product._id}`);
@@ -61,9 +65,8 @@ const AddProduct = () => {
 
     const fetchCategories = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost:5000/api/categories"
-        );
+        const response = await axios.get(`${API_URL}/categories`);
+        console.log(response);
         const { data } = response;
         setCategories(data);
       } catch (error) {
@@ -77,7 +80,7 @@ const AddProduct = () => {
   return (
     <>
       <div className="bannerAddProd w-full mt-8">
-        <h1 className="text-4xl text-center font-bold">Update Product</h1>
+        <h1 className="text-4xl text-center font-bold">Add Product</h1>
       </div>
 
       <form className="w-[85%] lg:w-1/2 mx-auto mt-8" onSubmit={handleSubmit}>

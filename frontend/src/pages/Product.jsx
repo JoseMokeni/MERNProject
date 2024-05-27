@@ -4,6 +4,13 @@ import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
 import axios from "axios";
 
+// get API ENDPOINT from .env file
+
+const API_ENDPOINT = process.env.REACT_APP_API_HOST;
+const API_PORT = process.env.REACT_APP_API_PORT;
+
+const API_URL = `${API_ENDPOINT}:${API_PORT}/api`;
+
 const Product = () => {
   const { user } = useSelector((state) => state.auth);
 
@@ -26,9 +33,7 @@ const Product = () => {
 
   const fetchProductData = async () => {
     try {
-      let response = await axios.get(
-        `http://localhost:5000/api/products/${id}`
-      );
+      let response = await axios.get(`${API_URL}/products/${id}`);
       let { data } = response;
       // console.log(data);
       let { name, description, price, image, category, owner, status } = data;
@@ -43,16 +48,14 @@ const Product = () => {
         status,
       });
       // console.log(product);
-      response = await axios.get(
-        `http://localhost:5000/api/categories/${category}`
-      );
+      response = await axios.get(`${API_URL}/categories/${category}`);
       // console.log(response);
       data = response.data;
       const { name: categoryName } = data;
       // console.log(categoryName);
       // setProduct({ ...product, category: categoryName });
 
-      response = await axios.get(`http://localhost:5000/api/users/${owner}`);
+      response = await axios.get(`${API_URL}/users/${owner}`);
       data = response.data;
       // console.log(data);
       const { phone: ownerPhone } = data;
@@ -79,7 +82,7 @@ const Product = () => {
     try {
       // console.log(product.category);
       const response = await axios.get(
-        `http://localhost:5000/api/categories/${product.category}`
+        `${API_URL}/categories/${product.category}`
       );
       const { data } = response;
       const { name } = data;
@@ -92,9 +95,7 @@ const Product = () => {
 
   const getOwnerName = async (ownerId) => {
     try {
-      const response = await axios.get(
-        `http://localhost:5000/api/users/${ownerId}`
-      );
+      const response = await axios.get(`${API_URL}/users/${ownerId}`);
       const { data } = response;
       const { name } = data;
       setProduct({ ...product, owner: name });
@@ -114,18 +115,15 @@ const Product = () => {
         const trimmedToken = user.replace(/['"]+/g, "");
         const bearerToken = `Bearer ${trimmedToken}`;
         console.log(bearerToken);
-        const response = await axios.delete(
-          `http://localhost:5000/api/products/${id}`,
-          {
-            headers: {
-              Authorization: bearerToken,
-            },
-          }
-        );
+        const response = await axios.delete(`${API_URL}/products/${id}`, {
+          headers: {
+            Authorization: bearerToken,
+          },
+        });
 
         // toast a success message while navigating to the home page
         toast.success("Product deleted successfully");
-        navigate("/");
+        navigate("/products/mine");
       }
     } catch (err) {
       console.log(err);

@@ -1,6 +1,11 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:5000/api/users";
+// get API ENDPOINT from .env file
+
+const API_ENDPOINT = process.env.REACT_APP_API_HOST;
+const API_PORT = process.env.REACT_APP_API_PORT;
+
+const API_URL = `${API_ENDPOINT}:${API_PORT}/api/users`;
 
 // Register a new user
 const register = async (user) => {
