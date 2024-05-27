@@ -4,6 +4,13 @@ import { useNavigate, Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import axios from "axios";
 
+// get API ENDPOINT from .env file
+
+const API_ENDPOINT = process.env.REACT_APP_API_HOST;
+const API_PORT = process.env.REACT_APP_API_PORT;
+
+const API_URL = `${API_ENDPOINT}:${API_PORT}/api`;
+
 const MyProducts = () => {
   const [products, setProducts] = useState([]);
 
@@ -20,21 +27,19 @@ const MyProducts = () => {
 
     const fetchProducts = async () => {
       try {
-        // send GET to http://localhost:5000/api/products/my-products with the token in the header
+        // send GET to api_url/products/my-products with the token in the header
         const trimmedToken = user.replace(/['"]+/g, "");
         const bearerToken = `Bearer ${trimmedToken}`;
         // console.log(bearerToken);
 
-        const response = await axios.get(
-          "http://localhost:5000/api/products/my-products",
-          {
-            headers: {
-              Authorization: bearerToken,
-            },
-          }
-        );
+        const response = await axios.get(`${API_URL}/products/my-products`, {
+          headers: {
+            Authorization: bearerToken,
+          },
+        });
+        console.log(response);
         const { data } = response;
-        // console.log(data);
+        console.log(data);
         setProducts(data);
       } catch (error) {
         console.log(error);

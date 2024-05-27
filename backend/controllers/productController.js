@@ -19,8 +19,8 @@ const addProduct = asyncHandler(async (req, res) => {
     !req.files.image ||
     !req.body.category;
 
-  // console.log(req.body);
-  // console.log(req.files);
+  console.log(req.body);
+  console.log(req.files);
 
   if (fieldsEmpty) {
     res.status(400);

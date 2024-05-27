@@ -1,5 +1,5 @@
 const express =require('express')
-const dotenv = require('dotenv').config()
+require('dotenv').config()
 const cors = require('cors')
 const cloudinary = require('cloudinary').v2
 const {errorHandler} = require('./middlewares/errorMiddleware')
@@ -7,6 +7,18 @@ const PORT = process.env.PORT || 3001
 const mongoose = require('mongoose')
 const expressFileUpload = require('express-fileupload')
 const createCategories = require('./utils/createCategories')
+
+const {
+    MONGO_HOST,
+    MONGO_USER,
+    MONGO_PASSWORD,
+    MONGO_DB,
+    MONGO_PORT
+} = process.env
+
+console.log(MONGO_HOST, MONGO_USER, MONGO_PASSWORD, MONGO_DB, MONGO_PORT)
+
+const MONGO_URI = `mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_HOST}:${MONGO_PORT}/${MONGO_DB}?authSource=admin`
 
 // cloudinary config
 
@@ -26,7 +38,7 @@ app.use(expressFileUpload({
 }))
 
 // mongoose connection
-mongoose.connect(process.env.MONGO_URI).then(() => {
+mongoose.connect(MONGO_URI).then(() => {
     createCategories()
     console.log('MongoDB connected')
 }).catch((err) => {

@@ -2,6 +2,13 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 
+// get API ENDPOINT from .env file
+
+const API_ENDPOINT = process.env.REACT_APP_API_HOST;
+const API_PORT = process.env.REACT_APP_API_PORT;
+
+const API_URL = `${API_ENDPOINT}:${API_PORT}/api`;
+
 const Home = () => {
   const [keyword, setKeyword] = useState("");
 
@@ -9,7 +16,7 @@ const Home = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/products")
+    fetch(`${API_URL}/products`)
       .then((res) => res.json())
       .then((data) => setProducts(data));
     setIsLoading(false);
@@ -17,7 +24,7 @@ const Home = () => {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    fetch(`http://localhost:5000/api/products?keyword=${keyword}`)
+    fetch(`${API_URL}/products?keyword=${keyword}`)
       .then((res) => res.json())
       .then((data) => {
         setProducts(data);
