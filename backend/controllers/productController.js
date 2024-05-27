@@ -35,8 +35,12 @@ const addProduct = asyncHandler(async (req, res) => {
   const image = req.files.image;
 
   // upload image to cloudinary
-  const uploadedImage = await cloudinary.uploader.upload(image.tempFilePath);
-  imageURL = uploadedImage.secure_url;
+  let imageURL;
+  await cloudinary.uploader.upload(image.tempFilePath).then((result) => {
+    imageURL = result.secure_url;
+  });
+
+  console.log(imageURL);
 
   const productToAdd = {
     name,
@@ -48,6 +52,8 @@ const addProduct = asyncHandler(async (req, res) => {
   };
 
   const product = await Product.create(productToAdd);
+
+  console.log(product);
 
   if (product) {
     res.status(201);

@@ -48,9 +48,9 @@ const AddProduct = () => {
         },
       });
       console.log(response);
-      // const { data } = response;
-      // toast.success("Product added successfully");
-      // navigate(`/products/${data.product._id}`);
+      const { data } = response;
+      toast.success("Product added successfully");
+      navigate(`/products/${data.product._id}`);
     } catch (error) {
       console.log(error);
       toast.error(error.response.data.message);

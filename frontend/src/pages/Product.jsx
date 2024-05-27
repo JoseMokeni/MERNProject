@@ -33,9 +33,7 @@ const Product = () => {
 
   const fetchProductData = async () => {
     try {
-      let response = await axios.get(
-        `${API_URL}/products/${id}`
-      );
+      let response = await axios.get(`${API_URL}/products/${id}`);
       let { data } = response;
       // console.log(data);
       let { name, description, price, image, category, owner, status } = data;
@@ -50,9 +48,7 @@ const Product = () => {
         status,
       });
       // console.log(product);
-      response = await axios.get(
-        `${API_URL}/categories/${category}`
-      );
+      response = await axios.get(`${API_URL}/categories/${category}`);
       // console.log(response);
       data = response.data;
       const { name: categoryName } = data;
@@ -99,9 +95,7 @@ const Product = () => {
 
   const getOwnerName = async (ownerId) => {
     try {
-      const response = await axios.get(
-        `${API_URL}/users/${ownerId}`
-      );
+      const response = await axios.get(`${API_URL}/users/${ownerId}`);
       const { data } = response;
       const { name } = data;
       setProduct({ ...product, owner: name });
@@ -121,18 +115,15 @@ const Product = () => {
         const trimmedToken = user.replace(/['"]+/g, "");
         const bearerToken = `Bearer ${trimmedToken}`;
         console.log(bearerToken);
-        const response = await axios.delete(
-          `${API_URL}/products/${id}`,
-          {
-            headers: {
-              Authorization: bearerToken,
-            },
-          }
-        );
+        const response = await axios.delete(`${API_URL}/products/${id}`, {
+          headers: {
+            Authorization: bearerToken,
+          },
+        });
 
         // toast a success message while navigating to the home page
         toast.success("Product deleted successfully");
-        navigate("/");
+        navigate("/products/mine");
       }
     } catch (err) {
       console.log(err);
